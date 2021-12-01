@@ -831,6 +831,9 @@ public class ModBlocks {
 
 	public static Block machine_schrabidium_transmutator;
 	public static final int guiID_schrabidium_transmutator = 30;
+	
+	public static Block machine_euphemium_transmutator;
+	public static final int guiID_euphemium_transmutator = 125;
 
 	public static Block machine_diesel;
 	public static final int guiID_machine_diesel = 31;
@@ -2074,6 +2077,8 @@ public class ModBlocks {
 		machine_storage_drum = new StorageDrum(Material.iron, guiID_storage_drum).setBlockName("machine_storage_drum").setHardness(5.0F).setResistance(10.0F).setCreativeTab(MainRegistry.machineTab).setBlockTextureName(RefStrings.MODID + ":machine_storage_drum");
 
 		machine_schrabidium_transmutator = new MachineSchrabidiumTransmutator(Material.iron).setBlockName("machine_schrabidium_transmutator").setHardness(5.0F).setResistance(100.0F).setCreativeTab(MainRegistry.machineTab);
+		
+		machine_euphemium_transmutator = new MachineEuphemiumTransmutator(Material.iron).setBlockName("machine_euphemium_transmutator").setHardness(5.0F).setResistance(100.0F).setCreativeTab(MainRegistry.machineTab);
 
 		machine_reix_mainframe = new MachineReiXMainframe(Material.iron).setBlockName("machine_reix_mainframe").setHardness(5.0F).setResistance(100.0F).setCreativeTab(MainRegistry.machineTab);
 		
@@ -2954,6 +2959,7 @@ public class ModBlocks {
 		GameRegistry.registerBlock(barricade, barricade.getUnlocalizedName());
 		GameRegistry.registerBlock(machine_turbofan, machine_turbofan.getUnlocalizedName());
 		GameRegistry.registerBlock(machine_schrabidium_transmutator, machine_schrabidium_transmutator.getUnlocalizedName());
+		GameRegistry.registerBlock(machine_euphemium_transmutator, machine_euphemium_transmutator.getUnlocalizedName());
 		GameRegistry.registerBlock(machine_combine_factory, machine_combine_factory.getUnlocalizedName());
 		GameRegistry.registerBlock(machine_teleporter, machine_teleporter.getUnlocalizedName());
 		GameRegistry.registerBlock(machine_satlinker, machine_satlinker.getUnlocalizedName());

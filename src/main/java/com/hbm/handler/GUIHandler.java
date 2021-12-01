@@ -230,6 +230,14 @@ public class GUIHandler implements IGuiHandler {
 			}
 			return null;
 		}
+		
+		case ModBlocks.guiID_euphemium_transmutator: {
+			if(entity instanceof TileEntityMachineEuphemiumTransmutator) {
+				return new ContainerMachineEuphemiumTransmutator(player.inventory, (TileEntityMachineEuphemiumTransmutator) entity);
+			}
+			return null;
+		}
+
 
 		case ModBlocks.guiID_machine_diesel: {
 			if(entity instanceof TileEntityMachineDiesel) {
@@ -1079,7 +1087,14 @@ public class GUIHandler implements IGuiHandler {
 			}
 			return null;
 		}
-
+		
+		case ModBlocks.guiID_euphemium_transmutator: {
+			if(entity instanceof TileEntityMachineEuphemiumTransmutator) {
+				return new GUIMachineEuphemiumTransmutator(player.inventory, (TileEntityMachineEuphemiumTransmutator) entity);
+			}
+			return null;
+		}
+		
 		case ModBlocks.guiID_machine_diesel: {
 			if(entity instanceof TileEntityMachineDiesel) {
 				return new GUIMachineDiesel(player.inventory, (TileEntityMachineDiesel) entity);
