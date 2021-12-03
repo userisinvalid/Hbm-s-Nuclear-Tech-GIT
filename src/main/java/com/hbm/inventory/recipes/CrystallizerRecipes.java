@@ -79,6 +79,8 @@ public class CrystallizerRecipes {
 		
 		recipes.put(new ComparableStack(ModItems.powder_impure_osmiridium), new ItemStack(ModItems.crystal_osmiridium));
 		
+		recipes.put(new ComparableStack(Items.reeds), new ItemStack(Items.string, 3));
+		
 		List<ItemStack> quartz = OreDictionary.getOres("crystalCertusQuartz");
 		
 		if(quartz != null && !quartz.isEmpty()) {
