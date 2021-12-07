@@ -197,6 +197,12 @@ public class RenderBobble extends TileEntitySpecialRenderer {
 			rotLeftArm = new double[]{0, -5, 45};
 			rotRightArm = new double[]{0, 15, 45};
 			break;
+			/*
+		case VAR:
+				rotLeftArm = new double[]{90, -45, 0};
+				rotRightArm = new double[]{90, -45, 0};
+			break;
+			*/
 		}
 	}
 	

@@ -1,6 +1,14 @@
 package com.hbm.tileentity.machine;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.hbm.config.VersatileConfig;
+import com.hbm.handler.FluidTypeHandler.FluidType;
+import com.hbm.interfaces.IFluidAcceptor;
+import com.hbm.interfaces.IFluidSource;
+import com.hbm.inventory.FluidTank;
+import com.hbm.inventory.OreDictManager;
 import com.hbm.inventory.recipes.MachineRecipes;
 import com.hbm.items.ModItems;
 import com.hbm.items.machine.ItemCapacitor;
@@ -15,7 +23,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 
-public class TileEntityMachineEuphemiumTransmutator extends TileEntityMachineBase implements IEnergyUser {
+public class TileEntityMachineEuphemiumTransmutator extends TileEntityMachineBase implements IEnergyUser, IFluidAcceptor {
 
 	public long power = 0;
 	public int process = 0;
@@ -28,7 +36,13 @@ public class TileEntityMachineEuphemiumTransmutator extends TileEntityMachineBas
 	private static final int[] slots_bottom = new int[] { 1, 2 };
 	private static final int[] slots_side = new int[] { 3, 2 };
 
-	private static final int itemNum = 14;
+	public FluidTank tank = new FluidTank(FluidType.BALEFIRE, 16000, 0);
+	public List<IFluidAcceptor> list = new ArrayList();
+	
+	public int age = 0;
+	
+	private static final int itemNum = 12;
+	private static final int consumption = 1000;
 	
 	public TileEntityMachineEuphemiumTransmutator() {
 		super(itemNum);
@@ -46,25 +60,18 @@ public class TileEntityMachineEuphemiumTransmutator extends TileEntityMachineBas
 			if (stack.getItem() instanceof IBatteryItem)
 				return true;
 			break;
-		case 2:
-		case 3:
 		case 4:
 		case 5:
+		case 6:
+		case 7:
 			if (stack.getItem() == ModItems.redcoil_capacitor)
 				return true;
 			break;
-		case 6:
-		case 7:
 		case 8:
 		case 9:
-			if (stack.getItem() == ModItems.egg_balefire_shard)
-				return true;
-			break;
 		case 10:
 		case 11:
-		case 12:
-		case 13:
-			if (MachineRecipes.mODE(stack, "ingotSchrabidium"))
+			if (MachineRecipes.mODE(stack, "nuggetSchrabidium")) //(stack.getItem() == ModItems.egg_balefire_shard)
 				return true;
 			break;
 		}
@@ -77,13 +84,16 @@ public class TileEntityMachineEuphemiumTransmutator extends TileEntityMachineBas
 
 		power = nbt.getLong("power");
 		process = nbt.getInteger("process");
+		tank.readFromNBT(nbt, "tank");
 	}
 
 	@Override
 	public void writeToNBT(NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
+		
 		nbt.setLong("power", power);
 		nbt.setInteger("process", process);
+		tank.writeToNBT(nbt, "tank");
 	}
 
 	@Override
@@ -124,7 +134,7 @@ public class TileEntityMachineEuphemiumTransmutator extends TileEntityMachineBas
 		
 		// check all slots other than battery and output
 		boolean isItemValid = true;
-		for(int i = 2; i<itemNum; i++) {
+		for(int i = 4; i<itemNum; i++) {
 			if(slots[i] == null) {
 				isItemValid = false;
 				break;
@@ -132,9 +142,11 @@ public class TileEntityMachineEuphemiumTransmutator extends TileEntityMachineBas
 		}
 		
 		// check if schrabidium is in
+		// i could probably write this in a less shitty way
+		// oh well lol
 		boolean isSchrab = true;
-		for(int i = 10; i<=13; i++) {
-			if(slots[i] == null || MachineRecipes.mODE(slots[i], "ingotSchrabidium")) {
+		for(int i = 8; i<=11; i++) {
+			if(slots[i] == null || !MachineRecipes.mODE(slots[i], OreDictManager.SA326.nugget())) {
 				isSchrab = false;
 				break;
 			}
@@ -142,8 +154,10 @@ public class TileEntityMachineEuphemiumTransmutator extends TileEntityMachineBas
 		
 		// check if redcoils are in and charged
 		boolean isRedcoil = true;
-		for(int i = 2; i<=5; i++) {
-			if(slots[i] == null || slots[i].getItem() != ModItems.redcoil_capacitor || ItemCapacitor.getDura(slots[i]) < 2) {
+		for(int i = 4; i<=7; i++) {
+			if(slots[i] == null 
+					|| slots[i].getItem() != ModItems.redcoil_capacitor 
+					|| ItemCapacitor.getDura(slots[i]) < 2) {
 				isRedcoil = false;
 				break;
 			}
@@ -154,8 +168,13 @@ public class TileEntityMachineEuphemiumTransmutator extends TileEntityMachineBas
 				&& isSchrab
 				&& isRedcoil
 				
-				&& (slots[0] == null || (slots[4] != null && slots[0].getItem() == ModItems.ingot_euphemium
-						&& slots[0].stackSize < slots[0].getMaxStackSize()))) {
+				&& tank.getFill() >= consumption
+				
+				&& (
+					slots[0] == null || (
+						slots[0].getItem() == ModItems.nugget_euphemium
+						&& slots[0].stackSize < slots[0].getMaxStackSize()))
+				) {
 			return true;
 		}
 		return false;
@@ -173,34 +192,49 @@ public class TileEntityMachineEuphemiumTransmutator extends TileEntityMachineBas
 			power = 0;
 			process = 0;
 			
-			for(int i=6;i<itemNum;i++) {
+			for(int i=8;i<itemNum;i++) {
 				slots[i].stackSize--;
 				if(slots[i].stackSize <= 0) {
 					slots[i] = null;
 				}
 			}
 			
-			for(int i=2;i<=5;i++) {
+			for(int i=4;i<=7;i++) {
 				if (slots[i] != null) {
 					ItemCapacitor.setDura(slots[i], ItemCapacitor.getDura(slots[i]) - 2);
 				}
 			}
 			
 			if (slots[0] == null) {
-				slots[0] = new ItemStack(ModItems.ingot_euphemium);
+				slots[0] = new ItemStack(ModItems.nugget_euphemium);
 			} else {
 				slots[0].stackSize++;
 			}
-
+			
+			tank.setFill(tank.getFill() - consumption);
+			
 			this.worldObj.playSoundEffect(this.xCoord, this.yCoord, this.zCoord, "ambient.weather.thunder", 10000.0F,
+					0.8F + this.worldObj.rand.nextFloat() * 0.2F);
+			
+			this.worldObj.playSoundEffect(this.xCoord, this.yCoord, this.zCoord, "random.explode", 10.0F,
 					0.8F + this.worldObj.rand.nextFloat() * 0.2F);
 		}
 	}
 
+	
 	@Override
 	public void updateEntity() {
 
 		if (!worldObj.isRemote) {
+			
+			age++;
+			if(age >= 20)
+			{
+				age = 0;
+			}
+			
+			tank.loadTank(2, 3, slots);
+			tank.updateTank(xCoord, yCoord, zCoord, worldObj.provider.dimensionId);
 			
 			this.updateConnections();
 			
@@ -279,5 +313,45 @@ public class TileEntityMachineEuphemiumTransmutator extends TileEntityMachineBas
 	@Override
 	public long getMaxPower() {
 		return maxPower;
+	}
+
+	// below is a bunch of garbage that is probably wrong
+	// i dont understand most of it
+	// i just copy pasted from the boiler, turbofan and barrel's tileentity
+	// bob please dont get mad at me
+	
+	// "it just works" ~ todd howard
+	
+	@Override
+	public void setFillstate(int fill, int index) {
+		tank.setFill(fill);
+	}
+
+	@Override
+	public void setType(FluidType type, int index) {
+		tank.setTankType(type);
+	}
+	
+	@Override
+	public int getFluidFill(FluidType type) {
+		return type.name().equals(this.tank.getTankType().name()) ? tank.getFill() : 0;
+	}
+
+	@Override
+	public void setFluidFill(int i, FluidType type) {
+		if(type.name().equals(tank.getTankType().name()))
+			tank.setFill(i);
+	}
+
+	@Override
+	public List<FluidTank> getTanks() {
+		List<FluidTank> list = new ArrayList();
+		list.add(tank);
+		return list;
+	}
+	
+	@Override
+	public int getMaxFluidFill(FluidType type) {
+		return type.name().equals(this.tank.getTankType().name()) ? tank.getMaxFill() : 0;
 	}
 }

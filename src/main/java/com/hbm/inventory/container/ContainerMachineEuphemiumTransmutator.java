@@ -17,23 +17,21 @@ private TileEntityMachineEuphemiumTransmutator nukeBoy;
 		
 		nukeBoy = tedf;
 		
-		this.addSlotToContainer(new SlotMachineOutput(tedf, 0, 98, 63)); //output
-		this.addSlotToContainer(new Slot(tedf, 1, 8, 108)); //battery
+		this.addSlotToContainer(new SlotMachineOutput(tedf, 0, 80, 63)); //output
+		this.addSlotToContainer(new Slot(tedf, 1, 8, 108));  //battery
 		
-		this.addSlotToContainer(new Slot(tedf, 2, 26, 18)); //redcoil 1
-		this.addSlotToContainer(new Slot(tedf, 3, 26, 36)); //redcoil 2
-		this.addSlotToContainer(new Slot(tedf, 4, 26, 54)); //redcoil 3
-		this.addSlotToContainer(new Slot(tedf, 5, 26, 72)); //redcoil 4
-	
-		this.addSlotToContainer(new Slot(tedf, 6, 98, 45)); //balefire 1
-		this.addSlotToContainer(new Slot(tedf, 7, 80, 63)); //balefire 2
-		this.addSlotToContainer(new Slot(tedf, 8, 116, 63)); //balefire 3
-		this.addSlotToContainer(new Slot(tedf, 9, 98, 81)); //balefire 4
+		this.addSlotToContainer(new Slot(tedf, 2, 152, 108));  //fluid in
+		this.addSlotToContainer(new SlotMachineOutput(tedf, 3, 116, 108));  //fluid out
 		
-		this.addSlotToContainer(new Slot(tedf, 10, 98, 27)); //schrab input 1
-		this.addSlotToContainer(new Slot(tedf, 11, 62, 63)); //schrab input 2
-		this.addSlotToContainer(new Slot(tedf, 12, 134, 63)); //schrab input 3
-		this.addSlotToContainer(new Slot(tedf, 13, 98, 99)); //schrab input 4
+		this.addSlotToContainer(new Slot(tedf, 4, 80, 27));  //redcoil 1
+		this.addSlotToContainer(new Slot(tedf, 5, 44, 63));  //redcoil 2
+		this.addSlotToContainer(new Slot(tedf, 6, 116, 63)); //redcoil 3
+		this.addSlotToContainer(new Slot(tedf, 7, 80, 99));  //redcoil 4
+		
+		this.addSlotToContainer(new Slot(tedf, 8, 80, 45));   //schrab input 1
+		this.addSlotToContainer(new Slot(tedf, 9, 62, 63));   //schrab input 2
+		this.addSlotToContainer(new Slot(tedf, 10, 98, 63)); //schrab input 3
+		this.addSlotToContainer(new Slot(tedf, 11, 80, 81));  //schrab input 4
 		
 		for(int i = 0; i < 3; i++)
 		{
